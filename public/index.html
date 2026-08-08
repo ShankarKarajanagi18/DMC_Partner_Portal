@@ -1,10 +1,21 @@
 <!doctype html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; url=/dmc_portal.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Plan & Trip — DMC Partner Portal</title>
+    <script>
+      fetch('dmc_portal.html')
+        .then(function (response) { return response.text(); })
+        .then(function (html) {
+          document.open();
+          document.write(html);
+          document.close();
+        })
+        .catch(function () {
+          document.body.innerHTML = '<p style="font-family:sans-serif;padding:20px">Unable to load the portal.</p>';
+        });
+    </script>
   </head>
-  <body>
-    <p><a href="/dmc_portal.html">Open the portal</a></p>
-  </body>
+  <body></body>
 </html>
