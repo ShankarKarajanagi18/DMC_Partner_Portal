@@ -4,7 +4,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="icon" href="brand/planandtrip-favicon-white.png">
+<link rel="icon" href="public/logo.png">
 <style>
 @font-face{font-family:'Avenir Next';src:url('fonts/avenir-regular.woff2') format('woff2');font-weight:400;font-display:swap}
 @font-face{font-family:'Avenir Next';src:url('fonts/avenir-medium.woff2') format('woff2');font-weight:500;font-display:swap}
@@ -25,10 +25,10 @@ a{color:inherit}.hidden{display:none!important}.sp{flex:1}.mut{color:var(--mut);
 .bg-deco .b3{width:480px;height:480px;left:16%;bottom:-220px;background:radial-gradient(circle,rgba(244,236,229,.2),transparent 70%);animation-delay:-9s}
 @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(24px,-28px)}}
 .nav{display:flex;align-items:center;gap:14px;padding:13px clamp(18px,4vw,46px);background:rgba(13,15,52,.55);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:60}
-.logo{display:flex;align-items:center;gap:14px;cursor:pointer}.logo img{height:52px;display:block}
+.logo{display:flex;align-items:center;gap:14px;cursor:pointer}.logo img{height:52px;display:block;width:auto}
 .logo .sub{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700;border-left:1px solid var(--line);padding-left:13px}
 .site-foot{position:relative;z-index:2;margin-top:34px;padding:34px 5vw;border-top:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;background:rgba(13,15,52,.45);backdrop-filter:blur(10px)}
-.site-foot img{height:34px;opacity:.92}.site-foot .by{font-family:var(--sans);color:var(--body);font-size:14px}.site-foot .by b{color:var(--gold)}.site-foot .cp{font-size:12px;color:var(--mut)}
+.site-foot img{height:40px;opacity:.92;width:auto;display:block}.site-foot .by{font-family:var(--sans);color:var(--body);font-size:14px}.site-foot .by b{color:var(--gold)}.site-foot .cp{font-size:12px;color:var(--mut)}
 .badge{background:rgba(216,177,90,.14);border:1px solid rgba(216,177,90,.45);padding:6px 12px;border-radius:100px;font-size:12px;font-weight:700;color:var(--gold);font-family:var(--sans)}
 .navbtn{padding:9px 16px;border-radius:100px;border:2px solid var(--line-b);cursor:pointer;font-size:13px;font-weight:700;background:rgba(244,236,229,.04);color:var(--cream);transition:.25s}
 .navbtn:hover{border-color:var(--gold);color:var(--gold)}.navbtn.on{background:linear-gradient(105deg,var(--cream),var(--cream-2));border-color:transparent;color:var(--navy)}
@@ -66,14 +66,14 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 8px
 <body>
 <div class="bg-deco"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 <div class="nav">
-  <div class="logo"><img src="brand/planandtrip-white-trim.png" alt="Plan & Trip"><span class="sub">DMC Partner Portal</span></div>
+  <div class="logo"><img src="public/logo.png" alt="Plan & Trip"><span class="sub">DMC Partner Portal</span></div>
   <div class="sp"></div>
   <span class="badge" id="whoami">Not signed in</span>
   <div class="navbtn" id="navlogout" onclick="logout()" style="display:none">Log out</div>
 </div>
 <div class="wrap" id="app"></div>
 <footer class="site-foot">
-  <img src="brand/brilliant-white-h.svg" alt="Brilliant AI">
+  <img src="public/brilliant_ailogo.jpeg" alt="Brilliant AI">
   <div class="by">Plan &amp; Trip is a product by <b>Brilliant AI</b></div>
   <div class="cp">© 2026 Brilliant AI Travel &amp; Expedition · All rights reserved</div>
 </footer>
