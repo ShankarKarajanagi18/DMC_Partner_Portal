@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "frontend",
     "site": "dmc-partner-portal",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [

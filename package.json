@@ -1,0 +1,10 @@
+{
+  "name": "dmc-portal-site",
+  "version": "1.0.0",
+  "description": "Plan & Trip - DMC Partner Portal Workspace",
+  "scripts": {
+    "start": "node backend/server.js",
+    "backend": "node backend/server.js",
+    "dev": "node backend/server.js"
+  }
+}
