@@ -1008,6 +1008,9 @@
       return true;
     }
 
+    /* ---------- Live GCP Backend Configuration ---------- */
+    const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://dmc-backend-915577491201.us-central1.run.app';
+
     /* ---------- Firebase Web Client Initialization ---------- */
     let recaptchaVerifier = null;
     let confirmationResultGlobal = null;
@@ -1015,7 +1018,7 @@
     async function initFirebaseClient() {
       if (typeof firebase !== 'undefined' && !firebase.apps.length) {
         try {
-          const res = await fetch('/api/config/firebase');
+          const res = await fetch(API_BASE + '/api/config/firebase');
           const cfg = await res.json();
           if (cfg && cfg.projectId) {
             firebase.initializeApp(cfg);
@@ -1063,7 +1066,7 @@
       const cleanPhone = (rawPhone.startsWith('+') ? '' : '+') + rawPhone.replace(/[\s\-()]/g, '');
 
       try {
-        const res = await fetch('/api/auth/send-otp', {
+        const res = await fetch(API_BASE + '/api/auth/send-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone: cleanPhone })
@@ -1107,7 +1110,7 @@
       }
 
       try {
-        const res = await fetch('/api/auth/verify-otp', {
+        const res = await fetch(API_BASE + '/api/auth/verify-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone, otp: inputCode })
@@ -1230,7 +1233,7 @@
       };
 
       try {
-        const res = await fetch('/api/auth/register', {
+        const res = await fetch(API_BASE + '/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1384,7 +1387,7 @@
       }
 
       try {
-        const res = await fetch('/api/dmc/upload-docs', {
+        const res = await fetch(API_BASE + '/api/dmc/upload-docs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1413,7 +1416,7 @@
       S.pollTimer = setInterval(async () => {
         if (!S.dmc || !S.dmc.dmc_id) return;
         try {
-          const res = await fetch('/api/dmc/status/' + S.dmc.dmc_id);
+          const res = await fetch(API_BASE + '/api/dmc/status/' + S.dmc.dmc_id);
           const data = await res.json();
           if (data.success) {
             if (S.dmc.status !== data.status) {
@@ -1434,7 +1437,7 @@
       }
 
       try {
-        const res = await fetch('/api/admin/approve-dmc', {
+        const res = await fetch(API_BASE + '/api/admin/approve-dmc', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1530,7 +1533,7 @@
       }
 
       try {
-        const res = await fetch('/api/auth/login', {
+        const res = await fetch(API_BASE + '/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
