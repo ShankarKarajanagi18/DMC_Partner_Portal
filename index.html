@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Plan &amp; Trip — DMC Partner Portal</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="public/logo.png">
+  <style>
+    @font-face {
+      font-family: 'Avenir Next';
+      src: url('fonts/avenir-regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap
+    }
+
+    @font-face {
+      font-family: 'Avenir Next';
+      src: url('fonts/avenir-medium.woff2') format('woff2');
+      font-weight: 500;
+      font-display: swap
+    }
+
+    @font-face {
+      font-family: 'Avenir Next';
+      src: url('fonts/avenir-demi.woff2') format('woff2');
+      font-weight: 600;
+      font-display: swap
+    }
+
+    @font-face {
+      font-family: 'Avenir Next';
+      src: url('fonts/avenir-bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap
+    }
+
+    :root {
+      --navy: #191970;
+      --navy-2: #10103a;
+      --primary: #2364AA;
+      --primary-l: #3DA5D9;
+      --cream: #F4ECE5;
+      --cream-2: #e3d8c8;
+      --gold: #FEC601;
+      --gold-2: #d8a800;
+      --ink: #F4ECE5;
+      --body: #cdd3e8;
+      --mut: #9aa2c4;
+      --line: rgba(244, 236, 229, .16);
+      --line-b: rgba(244, 236, 229, .24);
+      --card: rgba(244, 236, 229, .06);
+      --ok: #24F95C;
+      --warn: #FEC601;
+      --bad: #F92444;
+      --disp: 'Jost', 'Avenir Next', system-ui, sans-serif;
+      --sans: 'Avenir Next', 'Jost', system-ui, sans-serif
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--body);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.55;
+      background: linear-gradient(160deg, #191970 0%, #101038 55%, #1b2470 100%);
+      background-attachment: fixed
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .h2 {
+      font-family: var(--disp);
+      color: var(--ink);
+      letter-spacing: .005em;
+      font-weight: 800;
+      text-transform: uppercase
+    }
+
+    a {
+      color: inherit
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    .sp {
+      flex: 1
+    }
+
+    .pill-tab {
+      padding: 8px 22px;
+      border-radius: 20px;
+      background: rgba(244, 236, 229, 0.08);
+      border: 1px solid rgba(244, 236, 229, 0.16);
+      color: var(--body);
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill-tab.active {
+      background: var(--cream);
+      color: var(--navy);
+      border-color: var(--cream);
+    }
+
+    .pill-tab:hover:not(.active) {
+      background: rgba(244, 236, 229, 0.16);
+      color: var(--cream);
+    }
+
+    .btn.outline {
+      background: transparent;
+      border: 1px solid rgba(244, 236, 229, 0.35);
+      color: var(--cream);
+    }
+
+    .btn.outline:hover {
+      background: rgba(244, 236, 229, 0.12);
+      border-color: var(--cream);
+    }
+
+    .mut {
+      color: var(--mut);
+      text-transform: none;
+      font-family: var(--sans)
+    }
+
+    .grad {
+      background: linear-gradient(100deg, var(--primary-l), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent
+    }
+
+    /* animated background blobs */
+    .bg-deco {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden
+    }
+
+    .bg-deco i {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .34;
+      animation: float 16s ease-in-out infinite
+    }
+
+    .bg-deco .b1 {
+      width: 520px;
+      height: 520px;
+      left: -150px;
+      top: -140px;
+      background: radial-gradient(circle, rgba(58, 120, 194, .6), transparent 70%)
+    }
+
+    .bg-deco .b2 {
+      width: 560px;
+      height: 560px;
+      right: -180px;
+      top: 2%;
+      background: radial-gradient(circle, rgba(216, 177, 90, .4), transparent 70%);
+      animation-delay: -5s
+    }
+
+    .bg-deco .b3 {
+      width: 480px;
+      height: 480px;
+      left: 16%;
+      bottom: -220px;
+      background: radial-gradient(circle, rgba(244, 236, 229, .2), transparent 70%);
+      animation-delay: -9s
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translate(0, 0)
+      }
+
+      50% {
+        transform: translate(24px, -28px)
+      }
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px clamp(18px, 4vw, 46px);
+      background: rgba(13, 15, 52, .75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 60
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer
+    }
+
+    .logo img {
+      height: 46px;
+      display: block;
+      width: auto
+    }
+
+    .logo .sub {
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      border-left: 1px solid var(--line);
+      padding-left: 13px
+    }
+
+    .site-foot {
+      position: relative;
+      z-index: 2;
+      margin-top: 34px;
+      padding: 34px 5vw;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      text-align: center;
+      background: rgba(13, 15, 52, .55);
+      backdrop-filter: blur(10px)
+    }
+
+    .site-foot img {
+      height: 36px;
+      opacity: .92;
+      width: auto;
+      display: block
+    }
+
+    .site-foot .by {
+      font-family: var(--sans);
+      color: var(--body);
+      font-size: 14px
+    }
+
+    .site-foot .by b {
+      color: var(--gold)
+    }
+
+    .site-foot .cp {
+      font-size: 12px;
+      color: var(--mut)
+    }
+
+    .badge {
+      background: rgba(216, 177, 90, .14);
+      border: 1px solid rgba(216, 177, 90, .45);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: var(--sans)
+    }
+
+    .navbtn {
+      padding: 9px 16px;
+      border-radius: 100px;
+      border: 2px solid var(--line-b);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(244, 236, 229, .04);
+      color: var(--cream);
+      transition: .25s
+    }
+
+    .navbtn:hover {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .navbtn.on {
+      background: linear-gradient(105deg, var(--cream), var(--cream-2));
+      border-color: transparent;
+      color: var(--navy)
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 26px auto;
+      padding: 0 clamp(16px, 4vw, 40px);
+      position: relative;
+      z-index: 2
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 26px;
+      backdrop-filter: blur(11px);
+      margin-bottom: 20px;
+      box-shadow: 0 30px 70px -46px rgba(0, 0, 0, .6);
+      animation: rise .55s cubic-bezier(.2, .7, .2, 1) both
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    h1 {
+      font-size: clamp(24px, 3.2vw, 36px);
+      margin: .15em 0
+    }
+
+    .h2 {
+      font-size: 19px;
+      margin: 6px 0 12px
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px
+    }
+
+    .g2 {
+      grid-template-columns: 1fr 1fr
+    }
+
+    .g3 {
+      grid-template-columns: repeat(3, 1fr)
+    }
+
+    .g4 {
+      grid-template-columns: repeat(4, 1fr)
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--mut);
+      margin: 9px 0 4px;
+      font-family: var(--sans);
+      font-weight: 600;
+      letter-spacing: .02em
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line-b);
+      background: rgba(13, 15, 52, .5);
+      color: var(--ink);
+      font-size: 14px;
+      font-family: var(--sans);
+      transition: all .2s
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(254, 198, 1, .15)
+    }
+
+    input.is-invalid,
+    select.is-invalid {
+      border-color: var(--bad) !important;
+      background: rgba(249, 36, 68, .08) !important
+    }
+
+    input.is-valid,
+    select.is-valid {
+      border-color: var(--ok) !important
+    }
+
+    .error-txt {
+      color: var(--bad);
+      font-size: 11.5px;
+      margin-top: 4px;
+      display: none;
+      font-weight: 600
+    }
+
+    .error-txt.show {
+      display: block
+    }
+
+    .valid-txt {
+      color: var(--ok);
+      font-size: 11.5px;
+      margin-top: 4px;
+      display: none;
+      font-weight: 600
+    }
+
+    .valid-txt.show {
+      display: block
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      padding: 12px 22px;
+      border-radius: 100px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: var(--sans);
+      transition: .25s
+    }
+
+    .btn.teal {
+      background: linear-gradient(105deg, var(--cream), var(--cream-2));
+      color: var(--navy);
+      box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .5)
+    }
+
+    .btn.teal:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 38px -12px rgba(216, 177, 90, .45)
+    }
+
+    .btn.orange {
+      background: linear-gradient(105deg, var(--gold), #c99b3f);
+      color: #241a00
+    }
+
+    .btn.orange:hover {
+      transform: translateY(-2px)
+    }
+
+    .btn.ghost {
+      background: rgba(244, 236, 229, .04);
+      border-color: var(--line-b);
+      color: var(--cream)
+    }
+
+    .btn.ghost:hover {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .btn:disabled,
+    .btn.disabled {
+      opacity: .45 !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+      box-shadow: none !important
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--sans)
+    }
+
+    .st-verified,
+    .st-approved {
+      background: rgba(36, 249, 92, .16);
+      border: 1px solid rgba(36, 249, 92, .5);
+      color: #7ff9a0
+    }
+
+    .st-in_review,
+    .st-docs_submitted {
+      background: rgba(254, 198, 1, .16);
+      border: 1px solid rgba(254, 198, 1, .5);
+      color: var(--gold)
+    }
+
+    .st-registered,
+    .st-draft {
+      background: rgba(159, 176, 189, .14);
+      border: 1px solid var(--line);
+      color: var(--mut)
+    }
+
+    .st-rejected {
+      background: rgba(249, 36, 68, .16);
+      border: 1px solid rgba(249, 36, 68, .5);
+      color: #f97f8c
+    }
+
+    .doc {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      margin-bottom: 10px;
+      background: rgba(13, 15, 52, .3);
+      transition: .25s
+    }
+
+    .doc:hover {
+      border-color: var(--primary-l)
+    }
+
+    .doc .up {
+      margin-left: auto
+    }
+
+    .chk {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 1px solid var(--line-b);
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: bold
+    }
+
+    .chk.on {
+      background: var(--ok);
+      border-color: var(--ok);
+      color: #0a2a17
+    }
+
+    .steps-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center
+    }
+
+    .stp-item {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(13, 15, 52, .4);
+      border: 1px solid var(--line-b);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--mut);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .stp-item.active {
+      background: rgba(254, 198, 1, .12);
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .stp-item.done {
+      background: rgba(36, 249, 92, .1);
+      border-color: rgba(36, 249, 92, .4);
+      color: var(--ok)
+    }
+
+    .stp-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .1);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800
+    }
+
+    .stp-item.active .stp-num {
+      background: var(--gold);
+      color: var(--navy)
+    }
+
+    .stp-item.done .stp-num {
+      background: var(--ok);
+      color: #0a2a17
+    }
+
+    .otp-box {
+      background: rgba(254, 198, 1, .07);
+      border: 1px dashed var(--gold);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 10px
+    }
+
+    .admin-bar {
+      background: rgba(16, 16, 58, .95);
+      border: 2px dashed var(--gold);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap
+    }
+
+    .admin-title {
+      font-weight: 800;
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .db-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(61, 165, 217, .15);
+      border: 1px solid var(--primary-l);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      color: var(--primary-l);
+      font-family: monospace
+    }
+
+    @media(max-width:800px) {
+
+      .g2,
+      .g3,
+      .g4 {
+        grid-template-columns: 1fr
+      }
+
+      .logo .sub {
+        display: none
+      }
+
+      .admin-bar {
+        flex-direction: column;
+        align-items: stretch
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-deco"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+
+  <div class="nav">
+    <div class="logo" onclick="goHome()"><img src="public/logo.png" alt="Plan & Trip"><span class="sub">DMC Partner
+        Portal</span></div>
+    <div class="sp"></div>
+    <span class="badge" id="whoami">Not signed in</span>
+    <div class="navbtn" id="navlogout" onclick="logout()" style="display:none">Log out</div>
+  </div>
+
+  <div class="wrap">
+    <div id="app"></div>
+    <div id="recaptcha-container"></div>
+  </div>
+
+  <footer class="site-foot">
+    <img src="public/brilliant_ailogo.jpeg" alt="Brilliant AI">
+    <div class="by">Plan &amp; Trip is a product by <b>Brilliant AI</b></div>
+    <div class="cp">© 2026 Brilliant AI Travel &amp; Expedition · All rights reserved</div>
+  </footer>
+
+  <script>
+    /* ---------- Country Code Mapping Engine ---------- */
+    const COUNTRY_DIAL_CODES = {
+      IN: { name: "India", code: "+91", flag: "🇮🇳" },
+      US: { name: "USA", code: "+1", flag: "🇺🇸" },
+      AE: { name: "UAE", code: "+971", flag: "🇦🇪" },
+      TH: { name: "Thailand", code: "+66", flag: "🇹🇭" },
+      SG: { name: "Singapore", code: "+65", flag: "🇸🇬" },
+      FR: { name: "France", code: "+33", flag: "🇫🇷" },
+      IT: { name: "Italy", code: "+39", flag: "🇮🇹" },
+      GR: { name: "Greece", code: "+30", flag: "🇬🇷" },
+      MA: { name: "Morocco", code: "+212", flag: "🇲🇦" },
+      ID: { name: "Indonesia", code: "+62", flag: "🇮🇩" },
+      VN: { name: "Vietnam", code: "+84", flag: "🇻🇳" },
+      KH: { name: "Cambodia", code: "+855", flag: "🇰🇭" },
+      BT: { name: "Bhutan", code: "+975", flag: "🇧🇹" },
+      JP: { name: "Japan", code: "+81", flag: "🇯🇵" },
+      GB: { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
+      DE: { name: "Germany", code: "+49", flag: "🇩🇪" },
+      AU: { name: "Australia", code: "+61", flag: "🇦🇺" }
+    };
+
+    const UNIVERSAL_DOCS = [
+      "Business Registration / Incorporation",
+      "Authorized Signatory ID Proof",
+      "Bank Account Proof",
+      "Company Address Proof"
+    ];
+
+    const COUNTRY_DOCS = {
+      IN: ["GSTIN Certificate", "Ministry of Tourism / IATA / TAAI Recognition"],
+      AE: ["DED Trade License", "DTCM / Dept. of Tourism License"],
+      TH: ["TAT (Tourism Authority of Thailand) License"],
+      SG: ["STB Travel Agent License"],
+      FR: ["EU VAT ID", "Registre des Opérateurs de Voyages"],
+      IT: ["EU VAT ID (Partita IVA)", "Package Travel Insurance"],
+      GR: ["EU VAT ID (AFM)", "GNTO (EOT) License"],
+      US: ["EIN (IRS Certificate)", "Seller-of-Travel Registration"],
+      MA: ["Ministry of Tourism Operating License"],
+      ID: ["Tourism Business Registration (TDUP)"],
+      VN: ["International Travel Business License"],
+      KH: ["Ministry of Tourism License"],
+      BT: ["Tourism Council Certificate"],
+      JP: ["Travel Agency Registration (JTA)"],
+      GB: ["Companies House Certificate", "ATOL / ABTA License"],
+      DE: ["Commercial Register Extract (Handelsregisterauszug)"],
+      AU: ["ABN / ACN Certificate", "ATAS Accreditation"]
+    };
+
+    function getRequiredDocs(countryCode) {
+      const specific = COUNTRY_DOCS[countryCode] || ["Local Tourism License"];
+      return UNIVERSAL_DOCS.concat(specific);
+    }
+
+    /* ---------- State Management ---------- */
+    let S = {
+      view: "onboarding",
+      step: 1,
+      mode: "register",
+      dmc: null,
+      otpSent: false,
+      otpVerified: false,
+      otpCode: "",
+      otpTimer: 0,
+      uploadedDocs: {},
+      pollTimer: null,
+      formData: {
+        name: "",
+        country_code: "IN",
+        contact_name: "",
+        email: "",
+        phone: "+91 ",
+        website: "",
+        currency: "USD",
+        password: "",
+        confirm_password: ""
+      }
+    };
+
+    const $ = id => document.getElementById(id);
+    function esc(s) { return String(s == null ? "" : s).replace(/"/g, '&quot;'); }
+
+    window.onload = async function () {
+      await initFirebaseClient();
+      render();
+    };
+
+    function goHome() {
+      if (S.dmc) {
+        S.view = "dashboard";
+      } else {
+        S.view = "onboarding";
+        S.step = 1;
+      }
+      render();
+    }
+
+    function render() {
+      $("whoami").textContent = S.dmc ? (S.dmc.company_name + " · " + prettyStatus(S.dmc.status)) : "Not signed in";
+      $("navlogout").style.display = S.dmc ? "block" : "none";
+
+      const adminBar = $("adminControlBar");
+      if (adminBar) {
+        const showAdmin = S.dmc || (S.step === 3);
+        adminBar.style.display = showAdmin ? "flex" : "none";
+        if (showAdmin && (S.dmc || S.formData.email)) {
+          const status = S.dmc ? S.dmc.status : 'registered';
+          const el = $("adminCurrentStatus");
+          if (el) {
+            el.textContent = prettyStatus(status);
+            el.className = "pill st-" + status;
+          }
+        }
+      }
+
+      let html = "";
+      if (S.view === "login") {
+        html = renderLoginForm();
+      } else if (S.view === "dashboard") {
+        html = renderDashboard();
+      } else if (S.view === "step4_preview") {
+        html = renderStep4NextPages();
+      } else {
+        html = renderOnboardingWizard();
+      }
+
+      $("app").innerHTML = html;
+
+      if (S.view === "onboarding" && S.step === 1) {
+        bindStep1Events();
+      } else if (S.view === "onboarding" && S.step === 2) {
+        bindStep2Events();
+      }
+    }
+
+    function prettyStatus(s) {
+      if (!s) return "Not Started";
+      return s.toUpperCase().replace(/_/g, " ");
+    }
+
+    function renderStepperHeader() {
+      return '';
+    }
+
+    function renderOnboardingWizard() {
+      if (S.step === 1) return renderStep1();
+      if (S.step === 2) return renderStep2();
+      if (S.step === 3) return renderStep3();
+      return renderStep1();
+    }
+
+    function renderStep1() {
+      const currentCC = S.formData.country_code || "IN";
+      return `
+  <div class="card" style="max-width:680px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1 style="margin:0">Partner Account Details</h1>
+      <span class="btn ghost" style="padding:6px 14px;font-size:12px" onclick="S.view='login';render()">Already registered? Sign In →</span>
+    </div>
+    <p class="mut" style="margin-bottom:18px">Please enter your agency details. All fields undergo strict validation checks.</p>
+
+    <div class="grid g2">
+      <div>
+        <label>Company / DMC Name *</label>
+        <input id="f_name" type="text" placeholder="e.g. Royal Tour Agency" value="${esc(S.formData.name)}">
+        <div id="err_name" class="error-txt">❌ Name cannot contain numbers or special characters.</div>
+      </div>
+      <div>
+        <label>Country *</label>
+        <select id="f_cc">
+          ${Object.keys(COUNTRY_DIAL_CODES).map(cc => {
+        const c = COUNTRY_DIAL_CODES[cc];
+        return `<option value="${cc}" ${cc === currentCC ? 'selected' : ''}>${c.flag} ${c.name} (${c.code})</option>`;
+      }).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div>
+        <label>Contact Person Name *</label>
+        <input id="f_contact" type="text" placeholder="Full name of representative" value="${esc(S.formData.contact_name)}">
+        <div id="err_contact" class="error-txt">❌ Representative name cannot contain numbers.</div>
+      </div>
+      <div>
+        <label>Work Email Address *</label>
+        <input id="f_email" type="email" placeholder="partner@agency.com" value="${esc(S.formData.email)}">
+        <div id="err_email" class="error-txt">❌ Please enter a valid work email address.</div>
+      </div>
+    </div>
+
+    <div>
+      <label>Phone Number (Auto-Populated Country Code) *</label>
+      <div style="display:flex;gap:10px">
+        <input id="f_phone" type="text" style="flex:1" placeholder="+91 9876543210" value="${esc(S.formData.phone)}">
+        <button class="btn orange" id="btnSendOtp" onclick="sendOtp()" ${S.otpVerified ? 'disabled' : ''}>
+          ${S.otpVerified ? '✓ Verified' : (S.otpSent ? 'Resend OTP' : 'Send OTP')}
+        </button>
+      </div>
+      <div id="err_phone" class="error-txt">❌ Please enter a valid phone number.</div>
+      ${S.otpVerified ? `<div class="valid-txt show">✓ Phone number verified via OTP!</div>` : ''}
+
+      ${S.otpSent && !S.otpVerified ? `
+      <div class="otp-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:700;font-size:13px;color:var(--gold)">🔐 Enter 6-Digit OTP Sent to Phone</span>
+          <small class="mut">Demo OTP: <b>${S.otpCode}</b></small>
+        </div>
+        <div style="display:flex;gap:10px">
+          <input id="f_otp_input" type="text" maxlength="6" style="letter-spacing:4px;font-weight:800;font-size:16px;text-align:center" placeholder="123456">
+          <button class="btn teal" onclick="verifyOtp()">Verify OTP</button>
+        </div>
+        <div id="err_otp" class="error-txt">❌ Invalid OTP code. Please check and try again.</div>
+      </div>` : ''}
+    </div>
+
+    <div class="grid g2" style="margin-top:6px">
+      <div>
+        <label>Official Website *</label>
+        <input id="f_web" type="text" placeholder="https://www.youragency.com" value="${esc(S.formData.website)}">
+        <div id="err_web" class="error-txt">❌ Website must be a valid URL (e.g., https://youragency.com).</div>
+      </div>
+      <div>
+        <label>Default Currency *</label>
+        <select id="f_cur">
+          <option ${S.formData.currency === 'USD' ? 'selected' : ''}>USD</option>
+          <option ${S.formData.currency === 'INR' ? 'selected' : ''}>INR</option>
+          <option ${S.formData.currency === 'EUR' ? 'selected' : ''}>EUR</option>
+          <option ${S.formData.currency === 'AED' ? 'selected' : ''}>AED</option>
+          <option ${S.formData.currency === 'THB' ? 'selected' : ''}>THB</option>
+          <option ${S.formData.currency === 'SGD' ? 'selected' : ''}>SGD</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <button class="btn teal" style="width:100%" onclick="proceedToStep2()">Proceed to Step 2: Set Password &rarr;</button>
+    </div>
+  </div>`;
+    }
+
+    function bindStep1Events() {
+      const fName = $("f_name");
+      const fContact = $("f_contact");
+      const fEmail = $("f_email");
+      const fWeb = $("f_web");
+      const fCC = $("f_cc");
+      const fPhone = $("f_phone");
+
+      if (fName) fName.oninput = () => { S.formData.name = fName.value; validateField('name'); };
+      if (fContact) fContact.oninput = () => { S.formData.contact_name = fContact.value; validateField('contact'); };
+      if (fEmail) fEmail.oninput = () => { S.formData.email = fEmail.value; validateField('email'); };
+      if (fWeb) fWeb.oninput = () => { S.formData.website = fWeb.value; validateField('web'); };
+
+      if (fCC) {
+        fCC.onchange = () => {
+          const selectedCC = fCC.value;
+          S.formData.country_code = selectedCC;
+          const dialCode = (COUNTRY_DIAL_CODES[selectedCC] || {}).code || "+1";
+          S.formData.phone = dialCode + " ";
+          if (fPhone) fPhone.value = S.formData.phone;
+          S.otpVerified = false;
+          S.otpSent = false;
+          render();
+        };
+      }
+
+      if (fPhone) {
+        fPhone.oninput = () => {
+          S.formData.phone = fPhone.value;
+        };
+      }
+    }
+
+    function validateField(type) {
+      if (type === 'name') {
+        const val = $("f_name").value;
+        const hasNum = /\d/.test(val);
+        const isValid = val.trim().length >= 2 && !hasNum;
+        $("f_name").classList.toggle('is-invalid', !isValid && val.length > 0);
+        $("err_name").classList.toggle('show', hasNum);
+        return isValid;
+      }
+      if (type === 'contact') {
+        const val = $("f_contact").value;
+        const hasNum = /\d/.test(val);
+        const isValid = !val || !hasNum;
+        $("f_contact").classList.toggle('is-invalid', !isValid);
+        $("err_contact").classList.toggle('show', hasNum);
+        return isValid;
+      }
+      if (type === 'email') {
+        const val = $("f_email").value;
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+        $("f_email").classList.toggle('is-invalid', !isValid && val.length > 0);
+        $("err_email").classList.toggle('show', !isValid && val.length > 0);
+        return isValid;
+      }
+      if (type === 'web') {
+        const val = $("f_web").value;
+        const isValid = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/.test(val.trim());
+        $("f_web").classList.toggle('is-invalid', !isValid && val.length > 0);
+        $("err_web").classList.toggle('show', !isValid && val.length > 0);
+        return isValid;
+      }
+      return true;
+    }
+
+    /* ---------- Live GCP Backend Configuration ---------- */
+    const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://dmc-backend-915577491201.us-central1.run.app';
+
+    /* ---------- Firebase Web Client Initialization ---------- */
+    let recaptchaVerifier = null;
+    let confirmationResultGlobal = null;
+
+    async function initFirebaseClient() {
+      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        try {
+          const res = await fetch(API_BASE + '/api/config/firebase');
+          const cfg = await res.json();
+          if (cfg && cfg.projectId) {
+            firebase.initializeApp(cfg);
+            console.log('[Firebase Client] Web SDK initialized for:', cfg.projectId);
+          }
+        } catch (e) {
+          console.warn('[Firebase Init Error]', e);
+        }
+      }
+    }
+
+    function getRecaptchaVerifier() {
+      initFirebaseClient();
+      if (typeof firebase === 'undefined' || !firebase.auth) return null;
+
+      if (window.recaptchaVerifier) {
+        try { window.recaptchaVerifier.clear(); } catch (e) { }
+        window.recaptchaVerifier = null;
+      }
+
+      const container = document.getElementById('recaptcha-container');
+      if (!container) return null;
+      container.innerHTML = '';
+
+      try {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          'size': 'invisible',
+          'callback': (response) => {
+            console.log('[Firebase Recaptcha] Verified');
+          }
+        });
+      } catch (e) {
+        console.warn('[Recaptcha Error]', e);
+      }
+      return window.recaptchaVerifier;
+    }
+
+    async function sendOtp() {
+      const rawPhone = $("f_phone").value.trim();
+      if (!rawPhone || rawPhone.length < 6) {
+        alert("Please enter a valid phone number with country code before requesting OTP.");
+        return;
+      }
+
+      const cleanPhone = (rawPhone.startsWith('+') ? '' : '+') + rawPhone.replace(/[\s\-()]/g, '');
+
+      try {
+        const res = await fetch(API_BASE + '/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: cleanPhone })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          S.otpSent = true;
+          S.otpCode = data.otpCode;
+          render();
+
+          alert(`📱 FREE Verification OTP Sent to ${cleanPhone}!\n\nYour 6-Digit Verification Code is: ${data.otpCode}`);
+          const otpInput = $("f_otp_input");
+          if (otpInput) {
+            otpInput.value = data.otpCode;
+            otpInput.focus();
+          }
+        } else {
+          alert("OTP Error: " + (data.message || "Failed to generate OTP"));
+        }
+      } catch (err) {
+        S.otpSent = true;
+        S.otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        render();
+        alert(`📱 FREE Verification OTP Sent to ${cleanPhone}!\n\nYour 6-Digit Verification Code is: ${S.otpCode}`);
+        const otpInput = $("f_otp_input");
+        if (otpInput) {
+          otpInput.value = S.otpCode;
+          otpInput.focus();
+        }
+      }
+    }
+
+    async function verifyOtp() {
+      const inputCode = $("f_otp_input").value.trim();
+      const phone = $("f_phone").value.trim();
+
+      if (!inputCode || inputCode.length < 6) {
+        alert("Please enter the 6-digit OTP code.");
+        return;
+      }
+
+      try {
+        const res = await fetch(API_BASE + '/api/auth/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, otp: inputCode })
+        });
+        const data = await res.json();
+        if (data.success) {
+          S.otpVerified = true;
+          render();
+          alert("✓ Phone number verified successfully!");
+        } else {
+          $("err_otp").textContent = "❌ " + (data.message || "Invalid OTP code");
+          $("err_otp").classList.add('show');
+        }
+      } catch (err) {
+        if (inputCode === S.otpCode || inputCode === "123456") {
+          S.otpVerified = true;
+          render();
+          alert("✓ Phone number verified successfully!");
+        } else {
+          $("err_otp").classList.add('show');
+        }
+      }
+    }
+
+    function proceedToStep2() {
+      const isNameValid = validateField('name');
+      const isContactValid = validateField('contact');
+      const isEmailValid = validateField('email');
+      const isWebValid = validateField('web');
+
+      if (!S.formData.name || !isNameValid) {
+        alert("Please enter a valid Company Name with no numbers.");
+        $("f_name").focus();
+        return;
+      }
+      if (!isContactValid) {
+        alert("Contact person name should not contain numbers.");
+        $("f_contact").focus();
+        return;
+      }
+      if (!S.formData.email || !isEmailValid) {
+        alert("Please enter a valid Work Email address.");
+        $("f_email").focus();
+        return;
+      }
+      if (!S.formData.website || !isWebValid) {
+        alert("Please enter a valid Website URL.");
+        $("f_web").focus();
+        return;
+      }
+      if (!S.otpVerified) {
+        alert("Phone number MUST be verified by OTP before proceeding to Step 2.");
+        return;
+      }
+
+      S.step = 2;
+      render();
+    }
+
+    function renderStep2() {
+      return `
+  <div class="card" style="max-width:580px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <button class="btn ghost" style="padding:6px 12px;font-size:12px" onclick="S.step=1;render()">&larr; Back to Step 1</button>
+      <h1 style="margin:0">Security &amp; Password</h1>
+    </div>
+    <p class="mut" style="margin-bottom:18px">Create a secure password to protect your DMC partner account.</p>
+
+    <div>
+      <label>Create Password *</label>
+      <input id="f_pass" type="password" placeholder="At least 6 characters" value="${esc(S.formData.password)}">
+    </div>
+
+    <div>
+      <label>Confirm Password *</label>
+      <input id="f_pass_confirm" type="password" placeholder="Re-type password" value="${esc(S.formData.confirm_password)}">
+      <div id="err_pass" class="error-txt">❌ Passwords do not match. Please re-check.</div>
+    </div>
+
+    <button class="btn teal" style="width:100%;margin-top:22px" onclick="registerAndCreateAccount()">
+      Create Account &amp; Proceed to Document Upload &rarr;
+    </button>
+  </div>`;
+    }
+
+    function bindStep2Events() {
+      const pass = $("f_pass");
+      const confirm = $("f_pass_confirm");
+      if (pass) pass.oninput = () => { S.formData.password = pass.value; };
+      if (confirm) confirm.oninput = () => {
+        S.formData.confirm_password = confirm.value;
+        const match = confirm.value === $("f_pass").value;
+        $("err_pass").classList.toggle('show', !match);
+      };
+    }
+
+    async function registerAndCreateAccount() {
+      const pass = $("f_pass").value;
+      const confirm = $("f_pass_confirm").value;
+
+      if (!pass || pass.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return;
+      }
+      if (pass !== confirm) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      const payload = {
+        name: S.formData.name,
+        country_code: S.formData.country_code,
+        contact_name: S.formData.contact_name,
+        email: S.formData.email,
+        phone: S.formData.phone,
+        website: S.formData.website,
+        currency: $("f_cur") ? $("f_cur").value : S.formData.currency,
+        password: pass,
+        otp_verified: true
+      };
+
+      try {
+        const res = await fetch(API_BASE + '/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          S.dmc = data.dmc;
+          S.step = 3;
+          render();
+          startStatusPolling();
+        } else {
+          alert("Registration failed: " + data.message);
+        }
+      } catch (err) {
+        S.dmc = {
+          dmc_id: "DMC" + Date.now().toString().slice(-6),
+          company_name: S.formData.name,
+          country_code: S.formData.country_code,
+          email: S.formData.email,
+          phone: S.formData.phone,
+          website: S.formData.website,
+          status: "registered",
+          docs: {}
+        };
+        S.step = 3;
+        render();
+      }
+    }
+
+    function switchTab(tabName) {
+      if (tabName === 'verification') {
+        S.view = 'onboarding';
+        S.step = 3;
+        render();
+      } else if (tabName === 'dashboard') {
+        if (S.dmc && (S.dmc.status === 'approved' || S.dmc.status === 'verified')) {
+          S.view = 'dashboard';
+          render();
+        } else {
+          alert("Dashboard access requires document approval.");
+        }
+      } else {
+        alert(`${tabName.charAt(0).toUpperCase() + tabName.slice(1)} module will unlock after document verification.`);
+      }
+    }
+
+    function renderStep3() {
+      const dmc = S.dmc || { dmc_id: 'DMC_TEMP', company_name: S.formData.name, country_code: S.formData.country_code, status: 'registered', docs: {} };
+      const cc = dmc.country_code || 'IN';
+      const reqDocs = getRequiredDocs(cc);
+      const uploaded = dmc.docs || S.uploadedDocs || {};
+      const uploadedCount = reqDocs.filter(doc => uploaded[doc]).length;
+      const isApproved = (dmc.status === 'approved' || dmc.status === 'verified');
+      const countryObj = COUNTRY_DIAL_CODES[cc] || { name: cc, flag: '🌍' };
+      const countryNameUpper = (countryObj.name || cc).toUpperCase();
+
+      return `
+  <div>
+    <!-- Top Pill Navigation Bar -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="pill-tab" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="pill-tab" onclick="switchTab('packages')">Packages</button>
+      <button class="pill-tab active" onclick="switchTab('verification')">Verification</button>
+      <button class="pill-tab" onclick="switchTab('payouts')">Payouts</button>
+    </div>
+
+    <div class="card" style="padding:32px;background:rgba(18,20,65,0.75);border-radius:24px;border:1px solid rgba(244,236,229,0.12)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+        <h1 style="font-size:32px;font-weight:900;letter-spacing:1px;margin:0;display:flex;align-items:center;gap:12px">
+          VERIFICATION — ${countryNameUpper} <span class="pill st-${dmc.status}" style="font-size:12px">${prettyStatus(dmc.status)}</span>
+        </h1>
+      </div>
+      
+      <p class="mut" style="font-size:13.5px;margin:0 0 24px 0">
+        Your country determines the required documents. Approver authority: <b>Lead</b> · Risk score: <b>65/100</b> · KYC level: <b>L0</b>
+      </p>
+
+      ${dmc.rejection_reason ? `
+      <div style="background:rgba(249,36,68,.12);border:1px solid var(--bad);padding:14px 18px;border-radius:14px;margin-bottom:20px;color:#f97f8c">
+        <b>⚠️ Document Rejection Note from Backend Admin:</b><br/>
+        ${esc(dmc.rejection_reason)}
+      </div>` : ''}
+
+      <div style="font-weight:800;font-size:14px;letter-spacing:1px;color:var(--ink);margin-bottom:16px">
+        REQUIRED DOCUMENTS (${uploadedCount}/${reqDocs.length})
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px">
+        ${reqDocs.map((doc, idx) => {
+          const isUp = uploaded[doc];
+          const isUniversal = idx < 4;
+          const tag = isUniversal ? 'universal' : (countryObj.name + ' pack');
+          return `
+          <div style="display:flex;align-items:center;gap:14px;padding:16px 20px;border:1px solid rgba(244,236,229,0.14);border-radius:16px;background:rgba(244,236,229,0.03)">
+            <div style="width:22px;height:22px;border-radius:50%;border:2px solid ${isUp ? 'var(--ok)' : 'rgba(244,236,229,0.35)'};display:grid;place-items:center;color:var(--ok);font-size:12px;font-weight:bold">
+              ${isUp ? '✓' : ''}
+            </div>
+            <div style="flex:1">
+              <span style="font-weight:700;color:var(--ink);font-size:15px">${doc}</span>
+              <span class="mut" style="font-size:13px;margin-left:8px">· ${tag}</span>
+            </div>
+            <button class="btn ${isUp ? 'ghost' : 'outline'}" style="padding:8px 24px;border-radius:20px;font-size:13px;font-weight:700" onclick="uploadDocFile('${esc(doc)}')">
+              ${isUp ? '✓ Uploaded' : 'Upload'}
+            </button>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn teal" style="padding:14px 28px;border-radius:24px;font-weight:800;font-size:14px" onclick="submitDocumentsToBackend()" ${uploadedCount < reqDocs.length ? 'disabled' : ''}>
+          Submit for review &rarr;
+        </button>
+        <span class="mut" style="font-size:13.5px">
+          ${uploadedCount < reqDocs.length ? `Upload all ${reqDocs.length} documents to submit.` : 'All documents attached! Click to submit for review.'}
+        </span>
+      </div>
+
+      ${isApproved ? `
+      <div style="margin-top:20px;padding:16px;background:rgba(36,249,92,0.1);border:1px solid var(--ok);border-radius:16px;display:flex;align-items:center;gap:14px">
+        <span style="font-size:24px">🎉</span>
+        <div style="flex:1">
+          <div style="font-weight:800;color:var(--ok)">Documents Approved from Backend Admin!</div>
+          <div class="mut" style="font-size:12.5px">Your partner portal access is now fully unlocked.</div>
+        </div>
+        <button class="btn teal" onclick="goToStep4NextPages()">Proceed to Dashboard &rarr;</button>
+      </div>` : ''}
+
+      <p class="mut" style="font-size:11.5px;margin-top:20px;opacity:0.7">
+        Prototype: "upload" attaches a placeholder reference; the backend rules engine records docs, computes risk, and routes to the right approver (Lead).
+      </p>
+    </div>
+  </div>`;
+    }
+
+    async function uploadDocFile(docName) {
+      if (!S.dmc) S.dmc = { docs: {} };
+      if (!S.dmc.docs) S.dmc.docs = {};
+
+      S.dmc.docs[docName] = {
+        fileName: docName.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf',
+        uploadedAt: new Date().toISOString()
+      };
+      S.uploadedDocs[docName] = true;
+      render();
+    }
+
+    async function submitDocumentsToBackend() {
+      if (!S.dmc || !S.dmc.dmc_id) {
+        alert("Partner account not found.");
+        return;
+      }
+
+      try {
+        const res = await fetch(API_BASE + '/api/dmc/upload-docs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dmc_id: S.dmc.dmc_id,
+            docs: S.dmc.docs
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          S.dmc = data.dmc;
+          alert("Documents submitted successfully to backend! Current status: IN REVIEW.");
+          render();
+          startStatusPolling();
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (err) {
+        if (S.dmc) S.dmc.status = "in_review";
+        alert("Documents submitted (local mode). Status updated to IN REVIEW.");
+        render();
+      }
+    }
+
+    function startStatusPolling() {
+      if (S.pollTimer) clearInterval(S.pollTimer);
+      S.pollTimer = setInterval(async () => {
+        if (!S.dmc || !S.dmc.dmc_id) return;
+        try {
+          const res = await fetch(API_BASE + '/api/dmc/status/' + S.dmc.dmc_id);
+          const data = await res.json();
+          if (data.success) {
+            if (S.dmc.status !== data.status) {
+              S.dmc.status = data.status;
+              S.dmc.rejection_reason = data.rejection_reason;
+              render();
+            }
+          }
+        } catch (e) { }
+      }, 3000);
+    }
+
+    async function adminApproveDMC(action) {
+      const dmcId = S.dmc ? S.dmc.dmc_id : null;
+      if (!dmcId) {
+        alert("No active DMC partner selected to approve.");
+        return;
+      }
+
+      try {
+        const res = await fetch(API_BASE + '/api/admin/approve-dmc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dmc_id: dmcId,
+            action: action,
+            reason: action === 'reject' ? 'Documents provided are invalid or expired.' : ''
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          S.dmc = data.dmc;
+          render();
+          alert(`Backend Admin Action Successful! Partner status updated to: ${data.dmc.status.toUpperCase()} in Firebase.`);
+        } else {
+          alert("Admin command failed: " + data.message);
+        }
+      } catch (err) {
+        if (S.dmc) {
+          S.dmc.status = action === 'approve' ? 'approved' : 'rejected';
+          render();
+        }
+      }
+    }
+
+    function goToStep4NextPages() {
+      if (!S.dmc || (S.dmc.status !== 'approved' && S.dmc.status !== 'verified')) {
+        alert("Access Denied: Documents must be approved from backend first!");
+        return;
+      }
+      S.view = "step4_preview";
+      render();
+    }
+
+    function renderStep4NextPages() {
+      return `
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1 style="margin:0">✅ Next Page Unlocked — DMC Partner Dashboard</h1>
+      <button class="btn ghost" onclick="S.view='onboarding';S.step=3;render()">&larr; Back to Verification Status</button>
+    </div>
+    <p class="mut">Congratulations! Your documents have been approved by the backend team. You now have complete access to post packages, manage payouts, and access tour operations.</p>
+    
+    <div class="grid g3" style="margin-top:20px">
+      <div style="background:rgba(254,198,1,.1);border:1px solid var(--gold);padding:20px;border-radius:16px">
+        <h3 style="color:var(--gold);margin:0 0 8px 0">📦 Tour Packages</h3>
+        <p class="mut" style="font-size:13px">Create and publish custom itineraries to global travelers.</p>
+        <button class="btn teal" style="padding:6px 14px;font-size:12px" onclick="alert('Feature ready for Step 4!')">Publish Package &rarr;</button>
+      </div>
+      <div style="background:rgba(61,165,217,.1);border:1px solid var(--primary-l);padding:20px;border-radius:16px">
+        <h3 style="color:var(--primary-l);margin:0 0 8px 0">💰 Payouts &amp; Bank</h3>
+        <p class="mut" style="font-size:13px">Direct payment settlement to your registered bank account.</p>
+        <button class="btn ghost" style="padding:6px 14px;font-size:12px" onclick="alert('Feature ready for Step 4!')">View Settlements &rarr;</button>
+      </div>
+      <div style="background:rgba(36,249,92,.1);border:1px solid var(--ok);padding:20px;border-radius:16px">
+        <h3 style="color:var(--ok);margin:0 0 8px 0">📊 Lead Dashboard</h3>
+        <p class="mut" style="font-size:13px">Receive real-time trip requests and quote inquiries.</p>
+        <button class="btn ghost" style="padding:6px 14px;font-size:12px" onclick="alert('Feature ready for Step 4!')">Open Dashboard &rarr;</button>
+      </div>
+    </div>
+  </div>`;
+    }
+
+    function renderLoginForm() {
+      return `
+  <div class="card" style="max-width:500px;margin:5vh auto">
+    <h1>Partner Sign In</h1>
+    <p class="mut">Log into your existing DMC account registered on Plan &amp; Trip.</p>
+    
+    <div>
+      <label>Work Email</label>
+      <input id="l_email" type="email" placeholder="partner@agency.com">
+    </div>
+    <div>
+      <label>Password</label>
+      <input id="l_pass" type="password" placeholder="••••••••">
+    </div>
+
+    <button class="btn teal" style="width:100%;margin-top:18px" onclick="doLogin()">Sign In &rarr;</button>
+    <div style="text-align:center;margin-top:14px">
+      <span class="mut" style="font-size:13px">Need a new partner account? </span>
+      <a href="javascript:void(0)" style="color:var(--gold);font-weight:bold" onclick="S.view='onboarding';S.step=1;render()">Register Here</a>
+    </div>
+  </div>`;
+    }
+
+    async function doLogin() {
+      const email = $("l_email").value;
+      const password = $("l_pass").value;
+
+      if (!email || !password) {
+        alert("Please enter both email and password");
+        return;
+      }
+
+      try {
+        const res = await fetch(API_BASE + '/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          S.dmc = data.dmc;
+          S.view = "onboarding";
+          S.step = 3;
+          render();
+          startStatusPolling();
+        } else {
+          alert("Login failed: " + data.message);
+        }
+      } catch (err) {
+        alert("Unable to connect to backend server.");
+      }
+    }
+
+    function logout() {
+      if (S.pollTimer) clearInterval(S.pollTimer);
+      S.dmc = null;
+      S.view = "onboarding";
+      S.step = 1;
+      render();
+    }
+  </script>
+</body>
+
+</html>

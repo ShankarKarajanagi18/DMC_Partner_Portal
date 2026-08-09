@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "outputDirectory": "frontend",
+  "routes": [
+    {
+      "src": "/public/(.*)",
+      "dest": "/frontend/public/$1"
+    },
+    {
+      "src": "/dmc_portal.html",
+      "dest": "/frontend/dmc_portal.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dmc_portal.html"
+    }
+  ]
+}

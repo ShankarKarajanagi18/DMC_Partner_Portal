@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/dmc_portal.html"
+    }
+  ]
+}
